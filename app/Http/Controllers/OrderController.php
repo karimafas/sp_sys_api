@@ -31,6 +31,10 @@ class OrderController extends Controller
 
     public function getOrdersByDate(Request $request)
     {
-        return Order::whereDate('created_at', '2021-12-21')->get();
+        if (trim($request['date']) == '') {
+            return Order::all();
+        } else {
+            return Order::whereDate('created_at', $request['date'])->get();
+        }
     }
 }

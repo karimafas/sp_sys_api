@@ -50,10 +50,15 @@ class CustomerController extends Controller
 
         $success = Customer::where('phone', $request['phone'])->update($request->all());
 
-        if($success) {
+        if ($success) {
             return response(Customer::where('phone', $request['phone'])->first(), 200);
         } else {
             return response(['error' => 'Error updating customer.'], 400);
         }
+    }
+
+    public function getCustomerByID($id)
+    {
+        return Customer::where('id', $id)->first();
     }
 }
