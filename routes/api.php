@@ -28,5 +28,6 @@ Route::get("/customers/{id}", [CustomerController::class, "getCustomerByID"]);
 
 Route::post("/orders", [OrderController::class, "store"]);
 Route::post("/orders/date", [OrderController::class, "getOrdersByDate"]);
+Route::put("/orders/{id}", [OrderController::class, "update"]);
 
 Route::get("/content", [ContentController::class, "getJson"]);

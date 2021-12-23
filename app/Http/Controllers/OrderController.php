@@ -37,4 +37,17 @@ class OrderController extends Controller
             return Order::whereDate('created_at', $request['date'])->get();
         }
     }
+
+    public function update(Request $request, $id)
+    {
+        $order = Order::where('id', $id)->first();
+        $success = $order->update($request->all());
+        $order = Order::where('id', $id)->first();
+
+        if ($success) {
+            return response($order, 200);
+        } else {
+            return response('There was an error updating this order.', 400);
+        }
+    }
 }
