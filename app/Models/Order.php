@@ -14,6 +14,9 @@ class Order extends Model
     protected $fillable = [
         'customer_id',
         'delivery_time',
-        'order_json'
+        'order_json',
+        'total',
+        'items_number',
+        'order_number'
     ];
 }

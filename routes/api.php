@@ -28,6 +28,9 @@ Route::get("/customers/{id}", [CustomerController::class, "getCustomerByID"]);
 
 Route::post("/orders", [OrderController::class, "store"]);
 Route::post("/orders/date", [OrderController::class, "getOrdersByDate"]);
-Route::put("/orders/{id}", [OrderController::class, "update"]);
+Route::post("/orders/{id}", [OrderController::class, "update"]);
+Route::get("/order-number", [OrderController::class, "getOrderNumber"]);
+Route::get("/best/products", [OrderController::class, "getBestSellerProducts"]);
+Route::get("/best/variations", [OrderController::class, "getBestSellerVariations"]);
 
 Route::get("/content", [ContentController::class, "getJson"]);
