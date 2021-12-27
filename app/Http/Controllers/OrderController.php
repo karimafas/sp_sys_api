@@ -71,7 +71,7 @@ class OrderController extends Controller
         if (trim($request['date']) == '') {
             return Order::all();
         } else {
-            return Order::whereDate('created_at', $request['date'])->get();
+            return Order::whereDate('created_at', $request['date'])->orderBy('created_at', 'asc')->get();
         }
     }
 

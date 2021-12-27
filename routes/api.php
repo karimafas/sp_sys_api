@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ContentController;
@@ -21,16 +22,24 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post("/customers", [CustomerController::class, "getCustomerByPhone"]);
-Route::post("/customers/create", [CustomerController::class, "createCustomer"]);
-Route::put("/customers", [CustomerController::class, "updateCustomer"]);
-Route::get("/customers/{id}", [CustomerController::class, "getCustomerByID"]);
+Route::post("/register", [AuthController::class, "register"]);
+Route::post("/login", [AuthController::class, "login"]);
 
-Route::post("/orders", [OrderController::class, "store"]);
-Route::post("/orders/date", [OrderController::class, "getOrdersByDate"]);
-Route::post("/orders/{id}", [OrderController::class, "update"]);
-Route::get("/order-number", [OrderController::class, "getOrderNumber"]);
-Route::get("/best/products", [OrderController::class, "getBestSellerProducts"]);
-Route::get("/best/variations", [OrderController::class, "getBestSellerVariations"]);
 
-Route::get("/content", [ContentController::class, "getJson"]);
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post("/logout", [AuthController::class, "logout"]);
+
+    Route::post("/customers", [CustomerController::class, "getCustomerByPhone"]);
+    Route::post("/customers/create", [CustomerController::class, "createCustomer"]);
+    Route::put("/customers", [CustomerController::class, "updateCustomer"]);
+    Route::get("/customers/{id}", [CustomerController::class, "getCustomerByID"]);
+
+    Route::post("/orders", [OrderController::class, "store"]);
+    Route::post("/orders/date", [OrderController::class, "getOrdersByDate"]);
+    Route::post("/orders/{id}", [OrderController::class, "update"]);
+    Route::get("/order-number", [OrderController::class, "getOrderNumber"]);
+    Route::get("/best/products", [OrderController::class, "getBestSellerProducts"]);
+    Route::get("/best/variations", [OrderController::class, "getBestSellerVariations"]);
+
+    Route::get("/content", [ContentController::class, "getJson"]);
+});
