@@ -20,7 +20,8 @@ class OrderController extends Controller
             "order_json" => "required",
             "total" => "required",
             "items_number" => "required",
-            "order_number" => "required"
+            "order_number" => "required",
+            "mobile_order" => "required"
         ]);
 
         $customerCheck = Customer::where('id', request('customer_id'))->first();
@@ -37,7 +38,8 @@ class OrderController extends Controller
             "order_json" => request("order_json"),
             "total" => request("total"),
             "items_number" => request("items_number"),
-            "order_number" => request("order_number")
+            "order_number" => request("order_number"),
+            "mobile_order" => request("mobile_order")
         ]);
 
         foreach ($order as $item) {
@@ -69,9 +71,9 @@ class OrderController extends Controller
     public function getOrdersByDate(Request $request)
     {
         if (trim($request['date']) == '') {
-            return Order::all();
+            return Order::orderBy('created_at', 'desc')->get();
         } else {
-            return Order::whereDate('created_at', $request['date'])->orderBy('created_at', 'asc')->get();
+            return Order::whereDate('created_at', $request['date'])->orderBy('created_at', 'desc')->get();
         }
     }
 
@@ -111,6 +113,18 @@ class OrderController extends Controller
                 }
             }
         }
+
+        if ($success) {
+            return response($updateOrder, 200);
+        } else {
+            return response('There was an error updating this order.', 400);
+        }
+    }
+
+    public function assignRider(Request $request, $id)
+    {
+        $updateOrder = Order::where('id', $id)->first();
+        $success = $updateOrder->update($request->all());
 
         if ($success) {
             return response($updateOrder, 200);

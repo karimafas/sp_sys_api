@@ -17,6 +17,8 @@ class Order extends Model
         'order_json',
         'total',
         'items_number',
-        'order_number'
+        'order_number',
+        'mobile_order',
+        'rider_initials'
     ];
 }
