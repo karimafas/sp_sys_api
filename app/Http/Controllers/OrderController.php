@@ -21,7 +21,8 @@ class OrderController extends Controller
             "total" => "required",
             "items_number" => "required",
             "order_number" => "required",
-            "mobile_order" => "required"
+            "mobile_order" => "required",
+            "collection" => "required"
         ]);
 
         $customerCheck = Customer::where('id', request('customer_id'))->first();
@@ -39,7 +40,8 @@ class OrderController extends Controller
             "total" => request("total"),
             "items_number" => request("items_number"),
             "order_number" => request("order_number"),
-            "mobile_order" => request("mobile_order")
+            "mobile_order" => request("mobile_order"),
+            "collection" => request("collection")
         ]);
 
         foreach ($order as $item) {

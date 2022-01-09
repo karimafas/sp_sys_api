@@ -19,6 +19,8 @@ class Order extends Model
         'items_number',
         'order_number',
         'mobile_order',
-        'rider_initials'
+        'rider_initials',
+        'take_out',
+        'collection',
     ];
 }

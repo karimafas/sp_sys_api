@@ -20,26 +20,17 @@ class CustomerController extends Controller
 
     public function createCustomer(Request $request)
     {
-        $customer = Customer::where('phone', $request['phone'])->first();
-
-        if (empty($customer)) {
-            return Customer::create([
-                'phone' => request('phone'),
-                'address' => request('address'),
-                'address2' => request('address2'),
-                'area' => request('area'),
-                'credit' => request('credit'),
-                'discount' => request('discount'),
-                'last_name' => request('last_name'),
-                'level' => request('level'),
-                'notes' => request('notes'),
-            ]);
-        } else {
-            return response(
-                ['error' => 'A customer with this phone number already exists.'],
-                400
-            );
-        }
+        return Customer::create([
+            'phone' => request('phone'),
+            'address' => request('address'),
+            'address2' => request('address2'),
+            'area' => request('area'),
+            'credit' => request('credit'),
+            'discount' => request('discount'),
+            'last_name' => request('last_name'),
+            'level' => request('level'),
+            'notes' => request('notes'),
+        ]);
     }
 
     public function updateCustomer(Request $request)
@@ -60,5 +51,20 @@ class CustomerController extends Controller
     public function getCustomerByID($id)
     {
         return Customer::where('id', $id)->first();
+    }
+
+    public function getCustomerByName(Request $request)
+    {
+        if (empty($request['last_name'])) {
+            return response(['error' => 'Last name needed.'], 400);
+        }
+
+        $customer = Customer::where('last_name', strtolower($request['last_name']))->first();
+
+        if (empty($customer)) {
+            $customer = Customer::where('last_name', strtoupper($request['last_name']))->first();
+        }
+
+        return $customer;
     }
 }
