@@ -40,6 +40,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post("/orders/{id}", [OrderController::class, "update"]);
     Route::post("/orders/rider/{id}", [OrderController::class, "assignRider"]);
     Route::get("/order-number", [OrderController::class, "getOrderNumber"]);
+    Route::get("/orders/{id}", [OrderController::class, "index"]);
     Route::get("/best/products", [OrderController::class, "getBestSellerProducts"]);
     Route::get("/best/variations", [OrderController::class, "getBestSellerVariations"]);
 

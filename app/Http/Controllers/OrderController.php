@@ -155,4 +155,8 @@ class OrderController extends Controller
     {
         return DB::select('SELECT ov.variation_id, v.name, v.price, v.code, COUNT(*) FROM ordered_variations ov LEFT JOIN variations v ON ov.variation_id = v.id GROUP BY ov.variation_id, v.name, v.price, v.code ORDER BY COUNT(*) DESC');
     }
+
+    public function index($id) {
+        return Order::where('id', $id)->first();
+    }
 }
