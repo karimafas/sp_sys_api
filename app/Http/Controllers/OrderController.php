@@ -79,6 +79,23 @@ class OrderController extends Controller
         }
     }
 
+    public function getCustomersForOrders(Request $request)
+    {
+        if (trim($request['date']) == '') {
+            $orders = Order::orderBy('created_at', 'desc')->get();
+        } else {
+            $orders = Order::whereDate('created_at', $request['date'])->orderBy('created_at', 'desc')->get();
+        }
+
+        $customers = [];
+
+        foreach($orders as $order) {
+            $customers[] = Customer::where('id', $order['customer_id'])->first();
+        }
+
+        return $customers;
+    }
+
     public function update(Request $request, $id)
     {
         $updateOrder = Order::where('id', $id)->first();
