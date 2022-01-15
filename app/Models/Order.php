@@ -22,5 +22,6 @@ class Order extends Model
         'rider_initials',
         'take_out',
         'collection',
+        'visible'
     ];
 }

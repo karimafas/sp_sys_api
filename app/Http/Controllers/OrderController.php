@@ -75,7 +75,7 @@ class OrderController extends Controller
         if (trim($request['date']) == '') {
             return Order::orderBy('created_at', 'desc')->get();
         } else {
-            return Order::whereDate('created_at', $request['date'])->orderBy('order_number', 'desc')->get();
+            return Order::whereDate('created_at', $request['date'])->where('visible', true)->orderBy('order_number', 'desc')->get();
         }
     }
 
@@ -84,12 +84,12 @@ class OrderController extends Controller
         if (trim($request['date']) == '') {
             $orders = Order::orderBy('created_at', 'desc')->get();
         } else {
-            $orders = Order::whereDate('created_at', $request['date'])->orderBy('created_at', 'desc')->get();
+            $orders = Order::whereDate('created_at', $request['date'])->where('visible', true)->orderBy('order_number', 'desc')->get();
         }
 
         $customers = [];
 
-        foreach($orders as $order) {
+        foreach ($orders as $order) {
             $customers[] = Customer::where('id', $order['customer_id'])->first();
         }
 
@@ -101,34 +101,36 @@ class OrderController extends Controller
         $updateOrder = Order::where('id', $id)->first();
         $success = $updateOrder->update($request->all());
 
-        $order = json_decode(request('order_json'));
+        if (!empty($request['order_json'])) {
+            $order = json_decode(request('order_json'));
 
-        $updateOrder = Order::where('id', $id)->first();
+            $updateOrder = Order::where('id', $id)->first();
 
-        DB::table('ordered_products')->where('order_id', '=', $updateOrder->id)->delete();
-        DB::table('ordered_variations')->where('order_id', '=', $updateOrder->id)->delete();
+            DB::table('ordered_products')->where('order_id', '=', $updateOrder->id)->delete();
+            DB::table('ordered_variations')->where('order_id', '=', $updateOrder->id)->delete();
 
-        foreach ($order as $item) {
-            $product = DB::select("SELECT id, name, description, price, number, category_id FROM products WHERE number = {$item->product->number}");
-
-            for ($i = 0; $i < $item->quantity; $i++) {
-                OrderedProduct::create(
-                    [
-                        "order_id" => $updateOrder->id,
-                        "product_id" => $product[0]->id,
-                    ]
-                );
-            }
-
-            foreach ($item->selectedVariations as $variation) {
-                $foundVariation = DB::select("SELECT id, name, code, price FROM variations WHERE code = '{$variation->code}'");
+            foreach ($order as $item) {
+                $product = DB::select("SELECT id, name, description, price, number, category_id FROM products WHERE number = {$item->product->number}");
 
                 for ($i = 0; $i < $item->quantity; $i++) {
-                    OrderedVariation::create([
-                        "order_id" => $updateOrder->id,
-                        "product_id" => $product[0]->id,
-                        "variation_id" => $foundVariation[0]->id
-                    ]);
+                    OrderedProduct::create(
+                        [
+                            "order_id" => $updateOrder->id,
+                            "product_id" => $product[0]->id,
+                        ]
+                    );
+                }
+
+                foreach ($item->selectedVariations as $variation) {
+                    $foundVariation = DB::select("SELECT id, name, code, price FROM variations WHERE code = '{$variation->code}'");
+
+                    for ($i = 0; $i < $item->quantity; $i++) {
+                        OrderedVariation::create([
+                            "order_id" => $updateOrder->id,
+                            "product_id" => $product[0]->id,
+                            "variation_id" => $foundVariation[0]->id
+                        ]);
+                    }
                 }
             }
         }
@@ -154,7 +156,7 @@ class OrderController extends Controller
 
     public function getOrderNumber()
     {
-        $lastOrderToday = Order::whereDate('created_at', date('Y-m-d H:i:s'))->orderBy('created_at', 'desc')->first();
+        $lastOrderToday = Order::whereDate('created_at', date('Y-m-d H:i:s'))->where('visible', true)->orderBy('order_number', 'desc')->first();
 
         if (empty($lastOrderToday)) {
             return response(['order_number' => 1], 200);
@@ -173,7 +175,13 @@ class OrderController extends Controller
         return DB::select('SELECT ov.variation_id, v.name, v.price, v.code, COUNT(*) FROM ordered_variations ov LEFT JOIN variations v ON ov.variation_id = v.id GROUP BY ov.variation_id, v.name, v.price, v.code ORDER BY COUNT(*) DESC');
     }
 
-    public function index($id) {
+    public function index($id)
+    {
         return Order::where('id', $id)->first();
+    }
+
+    public function hide($id)
+    {
+        return Order::where('id', $id)->first()->update(['visible' => false]);
     }
 }
