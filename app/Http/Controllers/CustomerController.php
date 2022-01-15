@@ -71,12 +71,12 @@ class CustomerController extends Controller
 
     public function searchCustomer(Request $request)
     {
-        if (empty($request['last_name'])) {
-            return response(['error' => 'Last name needed.'], 400);
+        if (empty($request['search_query'])) {
+            return response(['error' => 'Search query needed.'], 400);
         }
 
-        $customer = DB::select("select * from customers where lower(last_name) LIKE '%" . strtolower($request['last_name']) . "%';");
+        $customers = DB::select("SELECT * FROM customers WHERE LOWER(last_name) LIKE '%" . strtolower($request['search_query']) . "%' OR phone LIKE '%" . $request['search_query'] . "%' OR LOWER(address) LIKE '%" . strtolower($request['search_query']) . "%';");
 
-        return $customer;
+        return response(['count' => count($customers), 'data' => $customers]);
     }
 }
