@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Customer;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
@@ -64,6 +65,17 @@ class CustomerController extends Controller
         if (empty($customer)) {
             $customer = Customer::where('last_name', strtoupper($request['last_name']))->first();
         }
+
+        return $customer;
+    }
+
+    public function searchCustomer(Request $request)
+    {
+        if (empty($request['last_name'])) {
+            return response(['error' => 'Last name needed.'], 400);
+        }
+
+        $customer = DB::select("select * from customers where lower(last_name) LIKE '%" . strtolower($request['last_name']) . "%';");
 
         return $customer;
     }
