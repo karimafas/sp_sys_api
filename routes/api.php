@@ -48,4 +48,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get("/best/variations", [OrderController::class, "getBestSellerVariations"]);
 
     Route::get("/content", [ContentController::class, "getJson"]);
+
+    Route::get("/products/{id}", [ContentController::class, "getProduct"]);
+    Route::delete("/products/{id}", [ContentController::class, "deleteProduct"]);
+    Route::post("/products", [ContentController::class, "storeProduct"]);
+    Route::put("/products/{id}", [ContentController::class, "updateProduct"]);
+
+    Route::get("/variations/{id}", [ContentController::class, "getVariation"]);
+    Route::delete("/variations/{id}", [ContentController::class, "deleteVariation"]);
+    Route::post("/variations", [ContentController::class, "storeVariation"]);
+    Route::put("/variations/{id}", [ContentController::class, "updateVariation"]);
 });
